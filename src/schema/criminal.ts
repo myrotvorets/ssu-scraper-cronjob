@@ -19,39 +19,47 @@ export interface Criminal {
 
 export interface ICriminal extends mongoose.Document, Criminal {}
 
-const criminalSchema = new mongoose.Schema({
-    fullname: { type: String, required: true, text: true },
-    surname: { type: String, required: true, index: true },
-    name: { type: String, required: true, index: true },
-    patronymic: { type: String, required: true, index: true },
-    dob: {
-        type: String,
-        required: true,
-        index: true,
-        set(value: string) {
-            return parseDOB(value);
+const criminalSchema = new mongoose.Schema(
+    {
+        fullname: { type: String, text: true },
+        surname: { type: String, index: true },
+        name: { type: String, index: true },
+        patronymic: { type: String, index: true },
+        dob: {
+            type: String,
+            required: true,
+            index: true,
+            set(value: string) {
+                return parseDOB(value);
+            },
+        },
+        sex: {
+            type: String,
+            required: true,
+            index: true,
+            set(value: string) {
+                return parseSex(value);
+            },
+        },
+        ddate: {
+            type: String,
+            set(value: string) {
+                return parseDDate(value);
+            },
+        },
+        dplace: { type: String },
+        deterrence: { type: String },
+        article: { type: String },
+        contact: { type: String },
+        photo: { type: String },
+        url: { type: String, unique: true },
+    },
+    {
+        versionKey: false,
+        skipVersioning: {
+            dontVersionMe: true,
         },
     },
-    sex: {
-        type: String,
-        required: true,
-        index: true,
-        set(value: string) {
-            return parseSex(value);
-        },
-    },
-    ddate: {
-        type: String,
-        set(value: string) {
-            return parseDDate(value);
-        },
-    },
-    dplace: { type: String, required: true },
-    deterrence: { type: String, required: true },
-    article: { type: String, required: true },
-    contact: { type: String, required: true },
-    photo: { type: String },
-    url: { type: String, required: true, unique: true },
-});
+);
 
-export default mongoose.model<ICriminal>('Criminal', criminalSchema);
+export default mongoose.model<ICriminal>('Criminal', criminalSchema, 'new_criminals');
