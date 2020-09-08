@@ -5,3 +5,5 @@
 /.gitignore
 /.npmrc
 /Dockerfile
+/LICENSE
+/README.md
