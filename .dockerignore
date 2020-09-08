@@ -2,8 +2,11 @@
 /.github
 /node_modules
 /.dockerignore
+/.eslintignore
+/.eslintrc.json
 /.gitignore
 /.npmrc
+/.prettierrc.js
 /Dockerfile
 /LICENSE
 /README.md
