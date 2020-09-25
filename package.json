@@ -12,7 +12,7 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.21",
+    "@types/cheerio": "^0.22.22",
     "@types/mongoose": "^5.7.36",
     "@types/node": "^14.11.1",
     "@types/node-fetch": "^2.5.7",
