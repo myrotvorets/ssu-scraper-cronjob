@@ -2,7 +2,7 @@
   "name": "@myrotvorets/ssu-scraper-cronjob",
   "author": "Myrotvorets <support@myrotvorets.center> (https://myrotvorets.center/)",
   "private": true,
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Cron job to scrape the list of persons wanted by the Security Service of Ukraine",
   "license": "MIT",
   "dependencies": {
