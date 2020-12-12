@@ -32,7 +32,7 @@ export async function collectURLs(page: number): Promise<string[]> {
 
     const urls: string[] = [];
     $('ul.wanted-list > li > a').each((index, element) => {
-        const href = element.attribs['href'];
+        const href = (element as cheerio.TagElement).attribs['href'];
         if (href) {
             urls.push(href.startsWith('/') ? `https://ssu.gov.ua${href}` : href);
         }
