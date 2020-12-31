@@ -14,7 +14,7 @@
   "devDependencies": {
     "@myrotvorets/eslint-config-myrotvorets-ts": "^2.2.2",
     "@types/cheerio": "^0.22.23",
-    "@types/node": "^14.14.14",
+    "@types/node": "^14.14.17",
     "@types/node-fetch": "^2.5.7",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "eslint": "^7.16.0",
