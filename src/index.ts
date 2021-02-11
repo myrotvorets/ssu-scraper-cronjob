@@ -1,13 +1,13 @@
 import { promisify } from 'util';
 import mongoose from 'mongoose';
+import { cleanEnv, url } from 'envalid';
 import CriminalModel from './schema/criminal';
 import { countPages, collectURLs, getCriminalDetails } from './lib/scraper';
-import { cleanEnv, url } from 'envalid';
 
 const wait = promisify(setTimeout);
 
 (async () => {
-    const env = cleanEnv(process.env, { MONGODB_CONNECTION_STRING: url() }, { strict: true, dotEnvPath: null });
+    const env = cleanEnv(process.env, { MONGODB_CONNECTION_STRING: url() });
 
     try {
         const connection = await mongoose.connect(env.MONGODB_CONNECTION_STRING, {
