@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cronjobs
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: ssu-scraper
+  namespace: cronjobs
+spec:
+  schedule: "@daily"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ssu-scraper
+              image: myrotvorets/ssu-scraper-cronjob
+              imagePullPolicy: IfNotPresent
+              restartPolicy: OnFailure
