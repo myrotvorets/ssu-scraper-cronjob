@@ -3,7 +3,7 @@
       "target": "es2019",
       "module": "CommonJS",
       "noEmitOnError": true,
-      "outDir": "./dist",
+      "outDir": "./out",
       "sourceMap": false,
       "declaration": true,
       "removeComments": true,
