@@ -32,7 +32,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc --declaration false --composite false",
-    "postbuild": "ncc build out/index.js -m"
+    "postbuild": "ncc build out/index.js -m --target es2020"
   },
   "keywords": [
     "ssu",
