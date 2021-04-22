@@ -27,7 +27,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint -f gha .",
     "lint:fix": "eslint . --fix",
-    "prebuild": "npm run lint",
     "build": "tsc --declaration false --composite false",
     "postbuild": "ncc build out/index.js -m --target es2020"
   },
