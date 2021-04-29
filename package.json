@@ -17,7 +17,7 @@
     "@types/node": "^15.0.1",
     "@types/node-fetch": "^2.5.7",
     "@vercel/ncc": "^0.28.2",
-    "eslint": "^7.16.0",
+    "eslint": "^7.25.0",
     "eslint-formatter-gha": "^1.2.0",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
