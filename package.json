@@ -6,7 +6,7 @@
   "description": "Cron job to scrape the list of persons wanted by the Security Service of Ukraine",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.5",
+    "cheerio": "^1.0.0-rc.9",
     "envalid": "^7.0.0",
     "mongoose": "^5.11.12",
     "node-fetch": "^2.6.0"
