@@ -19,3 +19,6 @@ spec:
               image: myrotvorets/ssu-scraper-cronjob
               imagePullPolicy: IfNotPresent
               restartPolicy: OnFailure
+              envFrom:
+                - secretRef:
+                    name: ssu-scraper-secret
