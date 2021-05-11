@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cronjobs
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - env: ".env"
+    name: ssu-scraper-secret
+    type: Opaque
+
+resources:
+  - "namespace.yaml"
+  - "cronjob.yaml"

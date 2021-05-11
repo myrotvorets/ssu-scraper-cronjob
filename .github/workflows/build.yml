@@ -1,19 +1,38 @@
-name: Build
+name: Build and Test
 
 on:
   push:
     branches:
       - "**"
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  prepare:
+    name: Check preconditions
     runs-on: ubuntu-latest
+    # Build if:
+    #   * PUSH: not a branch OR commit does not have '[ci skip]'
+    #   * PR: comes from a foreign repo
+    #   * NOT PUSH AND NOT PR
+    if: |
+      (github.event_name == 'push' && (!startsWith(github.ref, 'refs/heads/') || !contains(github.event.head_commit.message, '[ci skip]'))) ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name) ||
+      (github.event_name != 'push' && github.event_name != 'pull_request')
+    steps:
+      - run: echo
+
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    needs: prepare
     strategy:
       matrix:
         node_version:
-          - "12"
           - "14"
           - "16"
     steps:
@@ -34,15 +53,17 @@ jobs:
       - name: Run postinstall scripts
         run: npm rebuild && npm run prepare --if-present
 
-      - name: Lint
-        run: npm run lint
-
       - name: Build
         run: npm run build
+
+      - name: Run tests
+        run: npm test
 
   hadolint:
     name: Run hadolint
     runs-on: ubuntu-latest
+    needs: prepare
+    if: ${{ !startsWith(github.ref, 'refs/heads/') || !needs.prepare.outputs.head_tag }}
     steps:
       - name: Check out the source code
         uses: actions/checkout@v2
@@ -55,6 +76,9 @@ jobs:
   docker:
     name: Build Docker image
     runs-on: ubuntu-latest
+    needs: prepare
+    env:
+      IMAGE_NAME: myrotvorets/ssu-scraper-cronjob
     steps:
       - name: Check out the source code
         uses: actions/checkout@v2
@@ -73,33 +97,66 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v2.4.0
         with:
-          context: ${{ matrix.image }}
+          context: .
           load: true
           pull: true
           push: false
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-          tags: "myrotvorets/ssu-scraper-cronjob:${{ github.sha }}"
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+      - name: Determine security scan parameters
+        id: scanparams
+        run: |
+          if \
+            [ "${{ github.event_name }}" != "pull_request" ] || \
+            ([ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.event.pull_request.base.repo.full_name }}" ] && [ "${{ github.event.sender.login }}" != "dependabot[bot]" ]) \
+          then
+            echo ::set-output name=format::template
+            echo ::set-output name=template::@/contrib/sarif.tpl
+            echo ::set-output name=output::trivy-results.sarif
+          else
+            echo ::set-output name=format::table
+            echo ::set-output name=template::
+            echo ::set-output name=output::
+          fi
+
       - name: Security Scan
         id: scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "myrotvorets/ssu-scraper-cronjob:${{ github.sha }}"
-          format: template
-          template: "@/contrib/sarif.tpl"
-          output: trivy-results.sarif
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: ${{ steps.scanparams.outputs.format }}
+          template: ${{ steps.scanparams.outputs.template }}
+          output: ${{ steps.scanparams.outputs.output }}
         if: |
           github.event_name == 'workflow_dispatch' ||
-          github.event_name == 'push' && !contains(github.event.head_commit.message, '[ci skip]') && github.event.sender.login != 'dependabot[bot]'
+          github.event_name == 'push' && github.event.sender.login != 'dependabot[bot]'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: trivy-results.sarif
-        if: always() && (steps.scan.conclusion == 'success' || steps.scan.conclusion == 'failure')
+        if: always() && (steps.scan.conclusion == 'success' || steps.scan.conclusion == 'failure') && steps.scanparams.outputs.output != ''
+
+  trigger_cd:
+    name: Trigger CD
+    needs:
+      - build
+      - hadolint
+      - docker
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags'))
+    steps:
+      - name: Trigger Docker build
+        uses: myrotvorets/trigger-repository-dispatch-action@1.0.3
+        with:
+          token: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+          type: Push Image
+          payload: '{ "ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "event_name": "${{ github.event_name }}" }'

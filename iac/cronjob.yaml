@@ -9,7 +9,7 @@ metadata:
   name: ssu-scraper
   namespace: cronjobs
 spec:
-  schedule: "@daily"
+  schedule: "@weekly"
   jobTemplate:
     spec:
       template:
@@ -19,3 +19,6 @@ spec:
               image: myrotvorets/ssu-scraper-cronjob
               imagePullPolicy: IfNotPresent
               restartPolicy: OnFailure
+              envFrom:
+                - secretRef:
+                    name: ssu-scraper-secret

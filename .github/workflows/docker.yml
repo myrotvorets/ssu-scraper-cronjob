@@ -1,0 +1,182 @@
+name: Build and Push Docker Image
+
+on:
+  repository_dispatch:
+    types:
+      - Build Docker Image
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Docker image tag
+        default: edge
+        required: true
+
+env:
+  IMAGE_NAME: myrotvorets/ssu-scraper-cronjob
+  EVENT: ${{ github.event.client_payload.event_name }}
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    outputs:
+      refkind: ${{ steps.kind.outputs.kind }}
+      reference: ${{ steps.normalize.outputs.reference }}
+      commit: ${{ steps.normalize.outputs.commit }}
+    steps:
+      - name: Set commit status to PENDING
+        uses: myrotvorets/set-commit-status-action@1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+          context: Build Docker image
+          sha: ${{ github.event.client_payload.sha }}
+        if: github.event_name == 'repository_dispatch'
+
+      - name: Normalize parameters
+        id: normalize
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            REF_SHA="${{ github.event.client_payload.sha }}"
+            REF="${{ github.event.client_payload.ref }}"
+          else
+            REF_SHA="${{ github.sha }}"
+            REF="${{ github.ref }}"
+          fi
+          echo TIMESTAMP="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "${GITHUB_ENV}"
+          echo REFERENCE="${REF}" >> "${GITHUB_ENV}"
+          echo COMMIT="${REF_SHA}" >> "${GITHUB_ENV}"
+          echo "::set-output name=reference::${REF}"
+          echo "::set-output name=commit::${REF_SHA}"
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ env.COMMIT }}
+
+      - name: Analyze commit info
+        id: kind
+        uses: myrotvorets/composite-actions/refkind@master
+        with:
+          ref: ${{ env.REFERENCE }}
+
+      - name: Determine Docker tags
+        id: premeta
+        uses: myrotvorets/composite-actions/docker-tags@master
+        with:
+          refkind: ${{ steps.kind.outputs.kind }}
+          refname: ${{ steps.kind.outputs.name }}
+          commit_hash: ${{ env.COMMIT }}
+          image_name: ${{ env.IMAGE_NAME }}
+          default_branch: ${{ github.event.repository.default_branch }}
+
+      - name: Adjust Docker tags
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "::set-output name=tags::${{ github.event.inputs.tag }}"
+            echo "::set-output name=version::${{ github.event.inputs.tag }}"
+          else
+            echo "::set-output name=tags::${{ steps.premeta.outputs.tags }}"
+            echo "::set-output name=version::${{ steps.premeta.outputs.version }}"
+          fi
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.3.0
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ env.COMMIT }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2.4.0
+        with:
+          push: true
+          pull: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          context: .
+          file: ./Dockerfile
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+            org.opencontainers.image.created=${{ env.TIMESTAMP }}
+            org.opencontainers.image.revision=${{ env.COMMIT }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          context: Build Docker image
+          sha: ${{ github.event.client_payload.sha }}
+        if: always() && github.event_name == 'repository_dispatch'
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ needs.build.outputs.refkind == 'tag' }}
+    steps:
+      - name: Set commit status to PENDING
+        uses: myrotvorets/set-commit-status-action@1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+          context: Create a release
+          sha: ${{ needs.build.outputs.commit }}
+        if: github.event_name == 'repository_dispatch'
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Get release description
+        id: release_params
+        run: |
+          SUBJECT="$(git for-each-ref "${{ needs.build.outputs.reference }}" --format="%(contents:subject)")"
+          BODY="$(git for-each-ref "${{ needs.build.outputs.reference }}" --format="%(contents:body)")"
+          echo "::set-output name=subject::${SUBJECT}"
+          echo "::set-output name=body::${BODY}"
+
+      - name: Create a release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
+        with:
+          tag_name: ${{ needs.build.outputs.reference }}
+          release_name: ${{ steps.release_params.subject }}
+          body: ${{ steps.release_params.body }}
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          context: Create a release
+          sha: ${{ needs.build.outputs.commit }}
+        if: always() && github.event_name == 'repository_dispatch'

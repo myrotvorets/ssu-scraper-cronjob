@@ -1,0 +1,11 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: ssu-scraper
+  namespace: cronjobs
+spec:
+  template:
+    spec:
+      containers:
+        - name: ssu-scraper
+          image: myrotvorets/ssu-scraper-cronjob:${IMAGE_VERSION}
