@@ -10,6 +10,7 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          hostname: ssu-scraper
           containers:
             - name: ssu-scraper
               image: myrotvorets/ssu-scraper-cronjob

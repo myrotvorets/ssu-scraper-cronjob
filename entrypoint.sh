@@ -7,7 +7,7 @@ set -x
 : "${CRONJOB_SENDER:="$(id -un)@$(hostname -f)"}"
 
 if [ -n "${SMTP_RELAY}" ] && [ -n "${CRONJOB_MAILTO}" ]; then
-    /usr/bin/node index.js | \
+    /usr/bin/node index.js 2>&1 | \
         mailx -E \
             -S "smtp=smtp://${SMTP_RELAY}" \
             -S hostname="$(hostname -f)" \
