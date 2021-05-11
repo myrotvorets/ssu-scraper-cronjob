@@ -27,7 +27,6 @@ const criminalSchema = new mongoose.Schema(
         patronymic: { type: String, index: true },
         dob: {
             type: String,
-            required: true,
             index: true,
             set(value: string) {
                 return parseDOB(value);
