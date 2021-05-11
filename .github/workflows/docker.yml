@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   repository_dispatch:
     types:
-      - Build Docker Image
+      - Push Image
   workflow_dispatch:
     inputs:
       tag:
