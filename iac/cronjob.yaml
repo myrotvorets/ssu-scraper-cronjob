@@ -9,7 +9,7 @@ metadata:
   name: ssu-scraper
   namespace: cronjobs
 spec:
-  schedule: "@daily"
+  schedule: "@weekly"
   jobTemplate:
     spec:
       template:

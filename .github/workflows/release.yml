@@ -1,0 +1,76 @@
+name: Deployment
+
+on:
+  release:
+    types:
+      - released
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: edge
+        required: true
+        description: Docker image tag
+
+env:
+  IMAGE_NAME: myrotvorets/ssu-scraper-cronjob
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Normalize inputs
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo REFERENCE="${{ github.event.release.tag_name }}" >> "${GITHUB_ENV}"
+            echo IMAGE_VER="${{ github.event.release.tag_name }}" >> "${GITHUB_ENV}"
+          else
+            echo REFERENCE="" >> "${GITHUB_ENV}"
+            echo IMAGE_VER="${{ github.event.inputs.tag }}" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ env.REFERENCE }}
+
+      - name: Prepare the files
+        uses: myrotvorets/composite-actions/prepare-k8s-deployment@master
+        with:
+          image_version: ${{ env.IMAGE_VER }}
+          secret_environment: ${{ secrets.SECRET_ENVIRONMENT }}
+          path: iac
+
+      - name: Start deployment
+        uses: chrnorm/deployment-action@v1.2.0
+        id: deployment
+        with:
+          token: "${{ github.token }}"
+          environment: production
+
+      - name: Deploy
+        uses: myrotvorets/kubectl-action@1.0.5
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: apply -k iac/
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v1.0.0
+        with:
+          token: "${{ github.token }}"
+          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v1.0.0
+        with:
+          token: "${{ github.token }}"
+          state: "failure"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ./iac/.env
