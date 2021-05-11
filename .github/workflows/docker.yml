@@ -105,7 +105,7 @@ jobs:
           pull: true
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
           context: .
           file: ./Dockerfile
           labels: |
