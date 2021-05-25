@@ -8,7 +8,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.5",
     "envalid": "^7.0.0",
-    "mongoose": "^5.11.12",
+    "mongoose": "^5.12.11",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
