@@ -19,7 +19,7 @@
     "@vercel/ncc": "^0.28.2",
     "eslint": "^7.16.0",
     "eslint-formatter-gha": "^1.2.0",
-    "prettier": "^2.2.1",
+    "prettier": "^2.3.2",
     "ts-node": "^10.0.0",
     "typescript": "^4.1.3"
   },
