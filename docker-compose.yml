@@ -1,0 +1,14 @@
+# For integration tests only
+version: "3.6"
+
+services:
+  mongo:
+    image: mongo:4
+
+  scraper:
+    build:
+      context: .
+    depends_on:
+      - mongo
+    environment:
+      MONGODB_CONNECTION_STRING: mongodb://mongo:27017/ssu-criminals

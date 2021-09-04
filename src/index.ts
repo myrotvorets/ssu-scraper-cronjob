@@ -11,10 +11,6 @@ const wait = promisify(setTimeout);
 
     try {
         const connection = await mongoose.connect(env.MONGODB_CONNECTION_STRING, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-            useCreateIndex: true,
             maxPoolSize: 1,
         });
 
@@ -24,7 +20,7 @@ const wait = promisify(setTimeout);
         for (let i = 1; i <= pages; ++i) {
             const urls = await collectURLs(i);
             await wait(500);
-            for (const url of urls) {
+            for (const url of urls) /* NOSONAR */ {
                 const criminal = await getCriminalDetails(url);
                 if (criminal) {
                     const model = new CriminalModel(criminal);
