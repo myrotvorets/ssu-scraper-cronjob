@@ -50,7 +50,7 @@ jobs:
           echo "::set-output name=commit::${REF_SHA}"
 
       - name: Checkout
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
         with:
           ref: ${{ env.COMMIT }}
 
@@ -148,7 +148,7 @@ jobs:
         if: github.event_name == 'repository_dispatch'
 
       - name: Checkout
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
         with:
           ref: ${{ needs.build.outputs.commit }}
 
