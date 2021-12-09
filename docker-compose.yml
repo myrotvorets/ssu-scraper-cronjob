@@ -3,7 +3,7 @@ version: "3.6"
 
 services:
   mongo:
-    image: mongo:4
+    image: mongo:5
 
   scraper:
     build:
