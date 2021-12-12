@@ -1,18 +1,6 @@
-import { Agent as HttpsAgent } from 'https';
-import { Agent as HttpAgent } from 'http';
 import fetch from 'node-fetch';
 import cheerio from 'cheerio';
-import { Criminal } from '../schema/criminal';
-
-const httpAgent = new HttpAgent({
-    keepAlive: true,
-});
-
-const httpsAgent = new HttpsAgent({
-    keepAlive: true,
-});
-
-const agentSelector = (parsedUrl: URL): HttpAgent => (parsedUrl.protocol === 'https:' ? httpsAgent : httpAgent);
+import { Criminal } from '../schema/criminal.js';
 
 const headers = {
     Accept: 'text/html',
@@ -23,7 +11,6 @@ const headers = {
 
 export async function collectURLs(page: number): Promise<string[]> {
     const response = await fetch(`https://ssu.gov.ua/u-rozshuku?page=${page}`, {
-        agent: agentSelector,
         headers,
     });
 
@@ -44,7 +31,6 @@ export async function collectURLs(page: number): Promise<string[]> {
 export async function countPages(): Promise<number> {
     const response = await fetch('https://ssu.gov.ua/u-rozshuku', {
         headers,
-        agent: agentSelector,
     });
 
     const html = await response.text();
@@ -61,7 +47,6 @@ export async function countPages(): Promise<number> {
 export async function getCriminalDetails(url: string): Promise<Criminal | null> {
     const response = await fetch(url, {
         headers,
-        agent: agentSelector,
     });
 
     const html = await response.text();

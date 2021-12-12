@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { parseDOB, parseSex, parseDDate } from '../lib/helpers';
+import { parseDOB, parseSex, parseDDate } from '../lib/helpers.js';
 
 export interface Criminal {
     fullname: string;

@@ -1,13 +1,16 @@
+import { EventEmitter } from 'node:events';
 import { promisify } from 'util';
 import mongoose from 'mongoose';
 import { cleanEnv, url } from 'envalid';
-import CriminalModel from './schema/criminal';
-import { countPages, collectURLs, getCriminalDetails } from './lib/scraper';
+import CriminalModel from './schema/criminal.js';
+import { countPages, collectURLs, getCriminalDetails } from './lib/scraper.js';
 
 const wait = promisify(setTimeout);
 
 (async () => {
     const env = cleanEnv(process.env, { MONGODB_CONNECTION_STRING: url() });
+
+    EventEmitter.defaultMaxListeners = 20;
 
     try {
         const connection = await mongoose.connect(env.MONGODB_CONNECTION_STRING, {
