@@ -25,7 +25,7 @@ jobs:
       commit: ${{ steps.normalize.outputs.commit }}
     steps:
       - name: Set commit status to PENDING
-        uses: myrotvorets/set-commit-status-action@1.1.4
+        uses: myrotvorets/set-commit-status-action@5b39333f62641d4fe9c0967572f738a4aea8a15b # renovate: tag=1.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
@@ -50,7 +50,7 @@ jobs:
           echo "::set-output name=commit::${REF_SHA}"
 
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
         with:
           ref: ${{ env.COMMIT }}
 
@@ -82,16 +82,16 @@ jobs:
           fi
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1.12.0
+        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7 # renovate: tag=v1.12.0
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1.6.0
+        uses: docker/setup-buildx-action@94ab11c41e45d028884a99163086648e898eed25 # renovate: tag=v1.6.0
 
       - name: Cache Docker layers
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # renovate: tag=v2.1.7
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ env.COMMIT }}
@@ -99,7 +99,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build Docker image
-        uses: docker/build-push-action@v2.7.0
+        uses: docker/build-push-action@a66e35b9cbcf4ad0ea91ffcaf7bbad63ad9e0229 # renovate: tag=v2.7.0
         with:
           push: true
           pull: true
@@ -124,7 +124,7 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Set final commit status
-        uses: myrotvorets/set-commit-status-action@1.1.4
+        uses: myrotvorets/set-commit-status-action@5b39333f62641d4fe9c0967572f738a4aea8a15b # renovate: tag=1.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
@@ -139,7 +139,7 @@ jobs:
     if: ${{ needs.build.outputs.refkind == 'tag' }}
     steps:
       - name: Set commit status to PENDING
-        uses: myrotvorets/set-commit-status-action@1.1.4
+        uses: myrotvorets/set-commit-status-action@5b39333f62641d4fe9c0967572f738a4aea8a15b # renovate: tag=1.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
@@ -148,7 +148,7 @@ jobs:
         if: github.event_name == 'repository_dispatch'
 
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # renovate: tag=v2.4.0
         with:
           ref: ${{ needs.build.outputs.commit }}
 
@@ -164,7 +164,7 @@ jobs:
           echo "::set-output name=body::${BODY}"
 
       - name: Create a release
-        uses: actions/create-release@v1.1.4
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # renovate: tag=v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.REPOSITORY_ACCESS_TOKEN }}
         with:
@@ -173,7 +173,7 @@ jobs:
           body: ${{ steps.release_params.body }}
 
       - name: Set final commit status
-        uses: myrotvorets/set-commit-status-action@1.1.4
+        uses: myrotvorets/set-commit-status-action@5b39333f62641d4fe9c0967572f738a4aea8a15b # renovate: tag=1.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
