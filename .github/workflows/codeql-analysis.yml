@@ -29,10 +29,10 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@cd783c8a29bdcf5a5c79c5137889e24651fa626c # renovate: tag=v1.0.27
+      uses: github/codeql-action/init@8b37404d562d866ad6a65d0ecb4fa5131e047ca4 # renovate: tag=v1.0.30
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql-config.yml
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@cd783c8a29bdcf5a5c79c5137889e24651fa626c # renovate: tag=v1.0.27
+      uses: github/codeql-action/analyze@8b37404d562d866ad6a65d0ecb4fa5131e047ca4 # renovate: tag=v1.0.30
