@@ -69,7 +69,7 @@ jobs:
         uses: actions/checkout@dcd71f646680f2efd8db4afa5ad64fdcba30e748 # tag=v3.0.1
 
       - name: Run hadolint
-        uses: hadolint/hadolint-action@d7b38582334d9ac11c12021c16f21d63015fa250 # renovate: tag=v1.6.0
+        uses: hadolint/hadolint-action@f988afea3da57ee48710a9795b6bb677cc901183 # tag=v2.1.0
         with:
           dockerfile: Dockerfile
 
