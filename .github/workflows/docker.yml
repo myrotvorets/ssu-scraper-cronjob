@@ -82,7 +82,7 @@ jobs:
           fi
 
       - name: Login to DockerHub
-        uses: docker/login-action@6af3c118c8376c675363897acf1757f7a9be6583 # tag=v1.13.0
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7 # tag=v1.14.1
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -99,7 +99,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build Docker image
-        uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b # renovate: tag=v2.9.0
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a # tag=v2.10.0
         with:
           push: true
           pull: true
