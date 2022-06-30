@@ -18,7 +18,7 @@ RUN \
 COPY --chown=nobody:nobody ./src ./src
 RUN npm run build
 
-FROM myrotvorets/node-min:latest@sha256:3596dfdf62354340d91acea23e23a160ffeb34c02b255f91089cabe7d985cbcb
+FROM myrotvorets/node-min:latest@sha256:fca9d244428f7e107ffd4aa06bafda4ecd78019ba19ac1d6b07c6d53451afbb5
 USER root
 RUN apk add --no-cache heirloom-mailx && install -d -o nobody -g nobody /srv/service
 USER nobody:nobody
