@@ -139,7 +139,7 @@ jobs:
           github.event_name == 'push' && github.event.sender.login != 'dependabot[bot]'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@807578363a7869ca324a79039e6db9c843e0e100 # tag=v2.1.27
+        uses: github/codeql-action/upload-sarif@cc7986c02bac29104a72998e67239bb5ee2ee110 # tag=v2.1.28
         with:
           sarif_file: trivy-results.sarif
         if: always() && (steps.scan.conclusion == 'success' || steps.scan.conclusion == 'failure') && steps.scanparams.outputs.output != ''
