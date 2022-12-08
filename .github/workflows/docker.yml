@@ -25,7 +25,7 @@ jobs:
       commit: ${{ steps.normalize.outputs.commit }}
     steps:
       - name: Set commit status to PENDING
-        uses: myrotvorets/set-commit-status-action@74391422f441069685b0836133f6117f286debe5 # tag=1.1.5
+        uses: myrotvorets/set-commit-status-action@7d7fe9a321fbe56a1339449c19422e95a025c65a # 1.1.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
@@ -124,7 +124,7 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Set final commit status
-        uses: myrotvorets/set-commit-status-action@74391422f441069685b0836133f6117f286debe5 # tag=1.1.5
+        uses: myrotvorets/set-commit-status-action@7d7fe9a321fbe56a1339449c19422e95a025c65a # 1.1.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
@@ -139,7 +139,7 @@ jobs:
     if: ${{ needs.build.outputs.refkind == 'tag' }}
     steps:
       - name: Set commit status to PENDING
-        uses: myrotvorets/set-commit-status-action@74391422f441069685b0836133f6117f286debe5 # tag=1.1.5
+        uses: myrotvorets/set-commit-status-action@7d7fe9a321fbe56a1339449c19422e95a025c65a # 1.1.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: pending
@@ -173,7 +173,7 @@ jobs:
           body: ${{ steps.release_params.body }}
 
       - name: Set final commit status
-        uses: myrotvorets/set-commit-status-action@74391422f441069685b0836133f6117f286debe5 # tag=1.1.5
+        uses: myrotvorets/set-commit-status-action@7d7fe9a321fbe56a1339449c19422e95a025c65a # 1.1.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
