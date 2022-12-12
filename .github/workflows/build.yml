@@ -37,7 +37,7 @@ jobs:
           - "16"
     steps:
       - name: Check out the source code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Setup Node.js environment
         uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # tag=v3.5.1
@@ -66,7 +66,7 @@ jobs:
     if: ${{ !startsWith(github.ref, 'refs/heads/') || !needs.prepare.outputs.head_tag }}
     steps:
       - name: Check out the source code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Run hadolint
         uses: hadolint/hadolint-action@4b5806eb9c6bee4954fc0e0cc3ad6175fc9782c1 # v3.0.0
@@ -81,7 +81,7 @@ jobs:
       IMAGE_NAME: myrotvorets/ssu-scraper-cronjob
     steps:
       - name: Check out the source code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3.2.0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8c0edbc76e98fa90f69d9a2c020dcb50019dc325 # tag=v2.2.1
