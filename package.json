@@ -12,7 +12,7 @@
     "node-fetch": "^3.1.0"
   },
   "devDependencies": {
-    "@myrotvorets/eslint-config-myrotvorets-ts": "^2.23.0",
+    "@myrotvorets/eslint-config-myrotvorets-ts": "^2.24.0",
     "@types/cheerio": "^0.22.33",
     "@types/node": ">= 20.8.10",
     "@vercel/ncc": "^0.38.1",
