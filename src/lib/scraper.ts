@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import { Criminal } from '../schema/criminal.js';
 
 const headers = {
@@ -15,11 +15,11 @@ export async function collectURLs(page: number): Promise<string[]> {
     });
 
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
 
     const urls: string[] = [];
     $('ul.wanted-list > li > a').each((index, element) => {
-        const href = (element as cheerio.TagElement).attribs['href'];
+        const href = element.attribs['href'];
         if (href) {
             urls.push(href.startsWith('/') ? `https://ssu.gov.ua${href}` : href);
         }
@@ -34,7 +34,7 @@ export async function countPages(): Promise<number> {
     });
 
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
     const url = $('main ol.pagination > li:last-child > a').attr('href');
     const matches = url?.match(/\bpage=(\d+)/);
     if (matches) {
@@ -50,13 +50,15 @@ export async function getCriminalDetails(url: string): Promise<Criminal | null> 
     });
 
     const html = await response.text();
-    const $ = cheerio.load(html);
+    const $ = load(html);
 
     const photo = $('main.wanted-page img.person-photo').attr('src');
     const props = $('main.wanted-page .person-prop > .value');
 
     const items: string[] = [];
-    props.each((index, element) => items.push($(element).text().trim()));
+    props.each((index, element) => {
+        items.push($(element).text().trim());
+    });
 
     if (items.length !== 10) {
         return null;
