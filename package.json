@@ -6,19 +6,18 @@
   "description": "Cron job to scrape the list of the persons wanted by the Security Service of Ukraine",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.5",
+    "cheerio": "^1.0.0",
     "envalid": "^8.0.0",
-    "mongoose": "^8.0.0",
-    "node-fetch": "^3.1.0"
+    "mongoose": "^8.5.4",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@myrotvorets/eslint-config-myrotvorets-ts": "^2.24.0",
-    "@types/cheerio": "^0.22.35",
-    "@types/node": ">= 20.11.16",
+    "@myrotvorets/eslint-config-myrotvorets-ts": "^2.27.1",
+    "@types/node": ">=22.5.0",
     "@vercel/ncc": "^0.38.1",
-    "eslint-formatter-gha": "^1.4.3",
+    "eslint-formatter-gha": "^1.5.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.5.4"
   },
   "scripts": {
     "lint": "eslint -f gha .",

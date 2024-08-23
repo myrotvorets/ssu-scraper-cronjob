@@ -34,7 +34,7 @@ const wait = promisify(setTimeout);
             }
         }
 
-        await mongoose.connection.db.collection('new_criminals').rename('criminals', { dropTarget: true });
+        await mongoose.connection.db?.collection('new_criminals').rename('criminals', { dropTarget: true });
         await connection.disconnect();
     } catch (e) {
         console.error(e);
