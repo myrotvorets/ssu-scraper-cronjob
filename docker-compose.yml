@@ -3,7 +3,7 @@ version: "3.6"
 
 services:
   mongo:
-    image: mongo:8@sha256:0c17421487ae4a5cae88e7652a26ef72a8162adbc599a0730805526f5ff5ee83
+    image: mongo:8@sha256:9342a9279a9841fc5f8192e49dcaaf9404e6bb3a90e8cf134eb96074830dd448
 
   scraper:
     build:
