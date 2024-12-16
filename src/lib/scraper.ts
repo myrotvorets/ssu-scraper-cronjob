@@ -19,7 +19,7 @@ export async function collectURLs(page: number): Promise<string[]> {
 
     const urls: string[] = [];
     $('ul.wanted-list > li > a').each((index, element) => {
-        const href = element.attribs['href'];
+        const href = element.attribs.href;
         if (href) {
             urls.push(href.startsWith('/') ? `https://ssu.gov.ua${href}` : href);
         }
@@ -36,7 +36,7 @@ export async function countPages(): Promise<number> {
     const html = await response.text();
     const $ = load(html);
     const url = $('main ol.pagination > li:last-child > a').attr('href');
-    const matches = url?.match(/\bpage=(\d+)/);
+    const matches = url?.match(/\bpage=(\d+)/u);
     if (matches) {
         return +matches[1];
     }
@@ -56,7 +56,7 @@ export async function getCriminalDetails(url: string): Promise<Criminal | null> 
     const props = $('main.wanted-page .person-prop > .value');
 
     const items: string[] = [];
-    props.each((index, element) => {
+    props.each((_, element) => {
         items.push($(element).text().trim());
     });
 

@@ -15,7 +15,7 @@ export function parseDOB(s: string): string | null {
     };
 
     s = s.toLowerCase();
-    const matches = s.match(/(\d{1,2})\s+(\S+)\s+(\d{4})/);
+    const matches = /(\d{1,2})\s+(\S+)\s+(\d{4})/u.exec(s);
     if (matches) {
         const day = matches[1].padStart(2, '0');
         const month: string | undefined = lut[matches[2]];

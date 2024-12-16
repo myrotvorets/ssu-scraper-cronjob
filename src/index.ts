@@ -1,13 +1,12 @@
+/* eslint-disable no-await-in-loop */
 import { EventEmitter } from 'node:events';
-import { promisify } from 'util';
+import { setTimeout } from 'node:timers/promises';
 import mongoose from 'mongoose';
 import { cleanEnv, url } from 'envalid';
 import CriminalModel from './schema/criminal.js';
-import { countPages, collectURLs, getCriminalDetails } from './lib/scraper.js';
+import { collectURLs, countPages, getCriminalDetails } from './lib/scraper.js';
 
-const wait = promisify(setTimeout);
-
-(async () => {
+(async (): Promise<void> => {
     const env = cleanEnv(process.env, { MONGODB_CONNECTION_STRING: url() });
 
     EventEmitter.defaultMaxListeners = 20;
@@ -19,10 +18,10 @@ const wait = promisify(setTimeout);
 
         const pages = await countPages();
         await CriminalModel.deleteMany({});
-        await wait(500);
+        await setTimeout(500);
         for (let i = 1; i <= pages; ++i) {
             const urls = await collectURLs(i);
-            await wait(500);
+            await setTimeout(500);
             for (const url of urls) /* NOSONAR */ {
                 const criminal = await getCriminalDetails(url);
                 if (criminal) {
@@ -30,7 +29,7 @@ const wait = promisify(setTimeout);
                     await model.save();
                 }
 
-                await wait(500);
+                await setTimeout(500);
             }
         }
 
@@ -40,4 +39,7 @@ const wait = promisify(setTimeout);
         console.error(e);
         process.exit(1);
     }
-})();
+})().catch((err: unknown) => {
+    console.error(err);
+    process.exitCode = 1;
+});

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { parseDOB, parseSex, parseDDate } from '../lib/helpers.js';
+import { parseDDate, parseDOB, parseSex } from '../lib/helpers.js';
 
 export interface Criminal {
     fullname: string;
@@ -28,7 +28,7 @@ const criminalSchema = new mongoose.Schema(
         dob: {
             type: String,
             index: true,
-            set(value: string) {
+            set(value: string): string | null {
                 return parseDOB(value);
             },
         },
@@ -36,13 +36,13 @@ const criminalSchema = new mongoose.Schema(
             type: String,
             required: true,
             index: true,
-            set(value: string) {
+            set(value: string): string {
                 return parseSex(value);
             },
         },
         ddate: {
             type: String,
-            set(value: string) {
+            set(value: string): string | null {
                 return parseDDate(value);
             },
         },
