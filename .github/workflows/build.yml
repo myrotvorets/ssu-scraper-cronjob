@@ -87,13 +87,13 @@ jobs:
             ([ "${{ github.event_name }}" != "pull_request" ] || [ "${{ github.event.pull_request.head.repo.full_name }}" == "${{ github.event.pull_request.base.repo.full_name }}" ]) && \
             [ "${{ github.event.sender.login }}" != "dependabot[bot]" ]
           then
-            echo ::set-output name=format::template
-            echo ::set-output name=template::@/contrib/sarif.tpl
-            echo ::set-output name=output::trivy-results.sarif
+            echo "format=template" >> "${GITHUB_OUTPUT}"
+            echo "template=@/contrib/sarif.tpl" >> "${GITHUB_OUTPUT}"
+            echo "output=trivy-results.sarif" >> "${GITHUB_OUTPUT}"
           else
-            echo ::set-output name=format::table
-            echo ::set-output name=template::
-            echo ::set-output name=output::
+            echo "format=table" >> "${GITHUB_OUTPUT}"
+            echo "template=" >> "${GITHUB_OUTPUT}"
+            echo "output=" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Security Scan
