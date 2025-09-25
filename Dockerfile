@@ -18,7 +18,7 @@ RUN \
 COPY --chown=nobody:nobody ./src ./src
 RUN npm run build
 
-FROM myrotvorets/node-min:latest@sha256:8017cd12ac8977efc7bda3dc11a48606b0e2978c7fd532037fc290fbb19560b9
+FROM myrotvorets/node-min:latest@sha256:5dd7ee28a59cd89ba8f37d0f303d61b180bb236d6a8e9d3f13eaaa7f51f627d7
 USER root
 RUN apk add --no-cache heirloom-mailx -X https://dl-cdn.alpinelinux.org/alpine/v3.17/community && install -d -o nobody -g nobody /srv/service
 USER nobody:nobody
